@@ -81,25 +81,61 @@ public class NeedsService {
         return NeedResponse.from(needRepository.save(need));
     }
 
-    public List<NeedResponse> getAllNeeds(String status, String category, String keyword) {
+    public List<NeedResponse> getAllNeeds(String status, String category,
+                                          String urgency, String keyword) {
+        // keyword search takes priority
         if (keyword != null && !keyword.isBlank()) {
             return needRepository.searchByKeyword(keyword)
                     .stream().map(NeedResponse::from).collect(Collectors.toList());
         }
-        if (status != null && category != null) {
-            return needRepository.findByStatusAndCategoryOrderByPriorityScoreDesc(
-                            Need.NeedStatus.valueOf(status.toUpperCase()),
-                            Need.Category.valueOf(category.toUpperCase()))
+
+        boolean hasStatus   = status != null && !status.isBlank();
+        boolean hasCategory = category != null && !category.isBlank();
+        boolean hasUrgency  = urgency != null && !urgency.isBlank();
+
+        Need.NeedStatus   statusEnum   = hasStatus   ? Need.NeedStatus.valueOf(status.toUpperCase())     : null;
+        Need.Category     categoryEnum = hasCategory ? Need.Category.valueOf(category.toUpperCase())     : null;
+        Need.UrgencyLevel urgencyEnum  = hasUrgency  ? Need.UrgencyLevel.valueOf(urgency.toUpperCase()) : null;
+
+        // all three
+        if (hasStatus && hasCategory && hasUrgency) {
+            return needRepository
+                    .findByStatusAndCategoryAndUrgencyOrderByPriorityScoreDesc(
+                            statusEnum, categoryEnum, urgencyEnum)
                     .stream().map(NeedResponse::from).collect(Collectors.toList());
         }
-        if (status != null) {
-            return needRepository.findByStatusOrderByPriorityScoreDesc(
-                            Need.NeedStatus.valueOf(status.toUpperCase()))
+        // status + urgency
+        if (hasStatus && hasUrgency) {
+            return needRepository
+                    .findByStatusAndUrgencyOrderByPriorityScoreDesc(statusEnum, urgencyEnum)
                     .stream().map(NeedResponse::from).collect(Collectors.toList());
         }
-        if (category != null) {
-            return needRepository.findByCategoryOrderByPriorityScoreDesc(
-                            Need.Category.valueOf(category.toUpperCase()))
+        // urgency + category
+        if (hasUrgency && hasCategory) {
+            return needRepository
+                    .findByUrgencyAndCategoryOrderByPriorityScoreDesc(urgencyEnum, categoryEnum)
+                    .stream().map(NeedResponse::from).collect(Collectors.toList());
+        }
+        // urgency only
+        if (hasUrgency) {
+            return needRepository
+                    .findByUrgencyOrderByPriorityScoreDesc(urgencyEnum)
+                    .stream().map(NeedResponse::from).collect(Collectors.toList());
+        }
+        // existing status / category / both logic unchanged
+        if (hasStatus && hasCategory) {
+            return needRepository
+                    .findByStatusAndCategoryOrderByPriorityScoreDesc(statusEnum, categoryEnum)
+                    .stream().map(NeedResponse::from).collect(Collectors.toList());
+        }
+        if (hasStatus) {
+            return needRepository
+                    .findByStatusOrderByPriorityScoreDesc(statusEnum)
+                    .stream().map(NeedResponse::from).collect(Collectors.toList());
+        }
+        if (hasCategory) {
+            return needRepository
+                    .findByCategoryOrderByPriorityScoreDesc(categoryEnum)
                     .stream().map(NeedResponse::from).collect(Collectors.toList());
         }
         return needRepository.findAllByOrderByPriorityScoreDesc()

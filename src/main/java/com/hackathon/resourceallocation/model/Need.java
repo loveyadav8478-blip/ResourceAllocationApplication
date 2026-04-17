@@ -75,8 +75,8 @@ public class Need {
     @OneToMany(mappedBy = "need", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Task> tasks;
 
-    // ---- Enums ----
-
+    private String source;
+    //Enums
     public enum Category {
         FOOD, MEDICAL, SHELTER, WATER, OTHER
     }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -41,4 +42,16 @@ public interface NeedRepository extends JpaRepository<Need, Long> {
             "OR LOWER(n.description) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "ORDER BY n.priorityScore DESC")
     List<Need> searchByKeyword(@Param("keyword") String keyword);
+
+    List<Need> findByUrgencyOrderByPriorityScoreDesc(Need.UrgencyLevel urgency);
+
+    List<Need> findByStatusAndUrgencyOrderByPriorityScoreDesc(
+            Need.NeedStatus status, Need.UrgencyLevel urgency);
+
+    List<Need> findByUrgencyAndCategoryOrderByPriorityScoreDesc(
+            Need.UrgencyLevel urgency, Need.Category category);
+    List<Need> findByStatusAndCategoryAndUrgencyOrderByPriorityScoreDesc(
+            Need.NeedStatus status, Need.Category category, Need.UrgencyLevel urgency);
+
+//    Collection<Object> findByStatusAndCategoryAndUrgencyOrderByPriorityScoreDesc(Need.NeedStatus statusEnum, Need.Category categoryEnum, Need.UrgencyLevel urgencyEnum);
 }

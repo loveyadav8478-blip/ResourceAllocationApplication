@@ -1,4 +1,3 @@
-// exception/GlobalExceptionHandler.java
 package com.hackathon.resourceallocation.exception;
 
 import org.springframework.http.*;
@@ -15,6 +14,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorBody(ex.getMessage(), 404));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArg(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(errorBody(ex.getMessage(), 400));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

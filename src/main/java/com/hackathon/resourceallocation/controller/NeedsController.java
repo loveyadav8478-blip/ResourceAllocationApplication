@@ -28,8 +28,9 @@ public class NeedsController {
     public ResponseEntity<List<NeedResponse>> getAllNeeds(
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String category,
+            @RequestParam(required = false) String urgency,
             @RequestParam(required = false) String keyword) {
-        return ResponseEntity.ok(needsService.getAllNeeds(status, category, keyword));
+        return ResponseEntity.ok(needsService.getAllNeeds(status, category, urgency,keyword));
     }
 
     @GetMapping("/map")
