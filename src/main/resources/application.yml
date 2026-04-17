@@ -1,11 +1,11 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT}
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/resource_allocation
-    username: postgres
-    password: root123
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -32,8 +32,8 @@ spring:
 # ---- AI (Gemini) ----
 gemini:
   api:
-    key: AQ.Ab8RN6ITRICbXBO7PzLuaCM5oNm0BmFq35FcB5QjmVeTG59q1A
-    url: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent
+    key: ${YOUR_GEMINI_API_KEY}
+    url: ${API_URL}
 
 # ---- App Config ----
 app:
@@ -47,7 +47,7 @@ app:
     default-radius-km: 20
 
   jwt:
-    secret: 3f8a2b1c9d4e7f6a5b0c8d2e1f4a3b9c7d6e5f2a1b0c8d4e3f2a1b9c8d7e6f5
+    secret: ${JWT_SECRET}
     expiration-ms: 86400000
     refresh-expiration-ms: 604800000
 
